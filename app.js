@@ -7,7 +7,6 @@ import connection from "./database/dbConnections.js";
 
 
 
-
 const app = express();
 const port = process.env.SERVER_PORT;
 
