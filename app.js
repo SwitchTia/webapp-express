@@ -3,6 +3,7 @@ import cors from "cors";
 
 import notFound from "./middlewares/notFound.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import connection from "./database/dbConnections.js";
 
 
 
