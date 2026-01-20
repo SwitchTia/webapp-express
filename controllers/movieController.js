@@ -1,4 +1,4 @@
-import connection from "../database/dbConnections";
+import connection from "../database/dbConnections.js";
 
 function index(req, res, next) {
   const query = "SELECT * FROM movies";
