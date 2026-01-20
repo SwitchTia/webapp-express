@@ -4,7 +4,7 @@ import cors from "cors";
 import notFound from "./middlewares/notFound.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import connection from "./database/dbConnections.js";
-
+import moviesRouter from "./routers/moviesRouter.js";
 
 
 const app = express();
@@ -21,6 +21,8 @@ app.use(express.static("public"));
 
 app.use(express.json());
 
+
+app.use("/api/movies", moviesRouter);
 
 
 app.use(errorHandler);

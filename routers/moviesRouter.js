@@ -1,5 +1,5 @@
 import express from "express";
-import movieController from "../controllers/movieController";
+import movieController from "../controllers/movieController.js";
 
 
 
