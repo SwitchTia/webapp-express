@@ -12,6 +12,8 @@ function index(req, res, next) {
   });
 }
 
+
+
 function show(req, res, next) {
   const id = req.params.id;
   const showQuery = "SELECT * FROM movies WHERE id = ?"
