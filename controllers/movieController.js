@@ -20,11 +20,8 @@ function show(req, res, next) {
 
 
   const showQuery = `
-    SELECT movies.*, CAST(AVG(reviews.vote) AS FLOAT) AS vote_avg
-    FROM movies
-    LEFT JOIN reviews
-    ON movies.id = reviews.movie_id
-    WHERE books.slug = ?`;
+    SELECT * FROM movies
+    WHERE slug = ?`;
 
   connection.query(showQuery, [slug], (err, results) => {
     if (err) return next(err);
