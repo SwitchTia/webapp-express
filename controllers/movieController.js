@@ -1,4 +1,5 @@
 import connection from "../database/dbConnections.js";
+import slugify from "slugify";
 
 
 function index(req, res, next) {
@@ -15,16 +16,17 @@ function index(req, res, next) {
 
 
 function show(req, res, next) {
-  const id = req.params.id;
+  const slug = req.params.slug;
   const showQuery = `SELECT * FROM movies WHERE id = ?`
 
-  connection.query(showQuery, [id], (err, movieResult) => {
+  connection.query(showQuery, [slug], (err, movieResult) => {
     if (err) return next(err);
+
     const movie = movieResult[0];
 
     const reviewsQuery = "SELECT * FROM reviews WHERE movie_id = ?"
 
-    connection.query(reviewsQuery, [id], (err, reviewsResult) => {
+    connection.query(reviewsQuery, [movie.id], (err, reviewsResult) => {
       if (err) return next(err);
 
       res.status(200);

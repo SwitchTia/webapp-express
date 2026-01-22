@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.get("/", movieController.index);
 router.get("/search", movieController.search);
-router.get("/:id", movieController.show);
+router.get("/:slug", movieController.show);
 
+// router.post("/:id/reviews", bookController.storeReview);
 
 export default router;
