@@ -52,7 +52,7 @@ function search(req, res, next) {
 
   const searchKey = `%${key}%`;
 
-  const query = `SELECT movies.*, CAST(AVG(reviews.vote) AS FLOAT) AS avg_vote
+  const searchQuery = `SELECT movies.*, CAST(AVG(reviews.vote) AS FLOAT) AS avg_vote
     FROM movies
     LEFT JOIN reviews
     ON movies.id = reviews.movie_id
@@ -60,7 +60,7 @@ function search(req, res, next) {
     OR abstract LIKE ? 
     GROUP BY movies.id`
 
-  connection.query(query, [searchKey, searchKey], (err, results) => {
+  connection.query(searchQuery, [searchKey, searchKey], (err, results) => {
     if (err) return next(err);
     res.json({
       results: results,
@@ -69,14 +69,35 @@ function search(req, res, next) {
 }
 
 
-// function storeReview (req, res, next){
-//   const data = req.body;
-//   const movieId = req.params.id;
+function store(req, res, next) {
+  const { title, director, genre, abstract } = req.body;
 
-//   const sql = "INSERT INTO reviews (movie.id, name, vote, text) VALUES (?,?,?,?);";
+  console.log(req.body, req.file);
 
+  const slug = slugify(title, {
+    lower: true,
+    strict: true, 
+  });
 
-// }
+  const fileName = req.file?.filename || null;
 
-export default { index, show, search };
+  const sql =
+    "INSERT INTO `movies` (`slug`, `title`,`director`, `genre`, `abstract`, `image`) VALUES  (?, ?, ?, ?, ?)";
+
+  connection.query(
+    sql,
+    [slug, title, director, genre, abstract, fileName],
+    (err, result) => {
+      if (err) return next(err);
+
+      res.status(201);
+      return res.json({
+        message: "The movie was saved successfully",
+        movieId: result.insertId,
+      });
+    },
+  );
+}
+
+export default { index, show, search, store };
 
