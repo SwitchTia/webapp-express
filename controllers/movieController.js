@@ -2,7 +2,7 @@ import connection from "../database/dbConnections.js";
 
 
 function index(req, res, next) {
-  const query = "SELECT * FROM movies";
+  const query = `SELECT * FROM movies`;
 
   connection.query(query, (err, result) => {
     if (err) return next(err);
@@ -16,7 +16,7 @@ function index(req, res, next) {
 
 function show(req, res, next) {
   const id = req.params.id;
-  const showQuery = "SELECT * FROM movies WHERE id = ?"
+  const showQuery = `SELECT * FROM movies WHERE id = ?`
 
   connection.query(showQuery, [id], (err, movieResult) => {
     if (err) return next(err);
@@ -46,15 +46,13 @@ function search(req, res, next) {
 
   const searchKey = `%${key}%`;
 
-  const query = `
-    SELECT movies.*, CAST(AVG(reviews.vote) AS FLOAT) AS avg_vote
+  const query = `SELECT movies.*, CAST(AVG(reviews.vote) AS FLOAT) AS avg_vote
     FROM movies
     LEFT JOIN reviews
-    ON movies.id = reviews.movies_id
+    ON movies.id = reviews.movie_id
     WHERE title LIKE ? 
     OR abstract LIKE ? 
-    GROUP BY movies.id
-  `;
+    GROUP BY movies.id`
 
   connection.query(query, [searchKey, searchKey], (err, results) => {
     if (err) return next(err);
