@@ -39,5 +39,40 @@ function show(req, res, next) {
 
 }
 
-export default { index, show };
+
+
+function search(req, res, next) {
+  const key = req.query.key;
+
+  const searchKey = `%${key}%`;
+
+  const query = `
+    SELECT movies.*, CAST(AVG(reviews.vote) AS FLOAT) AS avg_vote
+    FROM movies
+    LEFT JOIN reviews
+    ON movies.id = reviews.movies_id
+    WHERE title LIKE ? 
+    OR abstract LIKE ? 
+    GROUP BY movies.id
+  `;
+
+  connection.query(query, [searchKey, searchKey], (err, results) => {
+    if (err) return next(err);
+    res.json({
+      results: results,
+    });
+  });
+}
+
+
+// function storeReview (req, res, next){
+//   const data = req.body;
+//   const movieId = req.params.id;
+
+//   const sql = "INSERT INTO reviews (movie.id, name, vote, text) VALUES (?,?,?,?);";
+
+
+// }
+
+export default { index, show, search };
 
