@@ -28,7 +28,7 @@ function show(req, res, next) {
 
     const movie = results[0];
 
-    const reviewsQuery = "SELECT * FROM reviews WHERE movie_id = ?"
+    const reviewsQuery = `SELECT * FROM reviews WHERE movie_id = ?`
 
     connection.query(reviewsQuery, [movie.id], (err, reviewsResult) => {
       if (err) return next(err);
@@ -82,7 +82,13 @@ function store(req, res, next) {
   const fileName = req.file?.filename || null;
 
   const sql =
-    "INSERT INTO `movies` (`slug`, `title`,`director`, `genre`, `abstract`, `image`) VALUES  (?, ?, ?, ?, ?)";
+    `INSERT INTO movies (
+    slug, 
+    title, 
+    director, 
+    genre, 
+    abstract, 
+    image) VALUES  (?, ?, ?, ?, ?)`;
 
   connection.query(
     sql,
@@ -99,5 +105,55 @@ function store(req, res, next) {
   );
 }
 
-export default { index, show, search, store };
+
+
+
+function storeReview(req, res, next) {
+
+  const data = req.body;
+  const movieId = req.params.id;
+
+  const movieQuery = `SELECT * FROM movies WHERE id = ?`;
+
+  connection.query(movieQuery, [movieId], (err, result) => {
+    if (err) return next(err);
+
+    if (result.length === 0) {
+      res.status(404);
+      return res.json({
+        error: "NOT FOUND",
+        message: "Oops! Movie not found.",
+      });
+    }
+
+   
+    if (!data.name || !data.vote || data.vote < 1 || data.vote > 5) {
+      res.status(400);
+      return res.json({
+        error: "CLIENT ERROR",
+        message:
+          "Name and review vote are obligatory fields. Review vote from 1 to 5",
+      });
+    }
+
+    const sql =
+      `INSERT INTO reviews (movie_id, name, vote, text) VALUES (?, ?, ?, ?);`;
+
+    connection.query(
+      sql,
+      [movieId, data.name, data.vote, data.text],
+      (err, result) => {
+        if (err) return next(err);
+
+        res.status(201);
+        res.json({
+          message: "The review was added successfully!",
+          id: result.insertId,
+        });
+      },
+    );
+  });
+}
+
+export default { index, show, search, store, storeReview };
 
